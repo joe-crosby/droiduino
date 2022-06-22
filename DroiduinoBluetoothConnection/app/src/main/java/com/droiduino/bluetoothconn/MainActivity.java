@@ -1,13 +1,14 @@
 package com.droiduino.bluetoothconn;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,14 +17,19 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static android.content.ContentValues.TAG;
@@ -50,21 +56,49 @@ public class MainActivity extends AppCompatActivity {
         final Toolbar toolbar = findViewById(R.id.toolbar);
         final ProgressBar progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
-        final TextView textViewInfo = findViewById(R.id.textViewInfo);
-        final Button buttonToggle = findViewById(R.id.buttonToggle);
-        buttonToggle.setEnabled(false);
-        final ImageView imageView = findViewById(R.id.imageView);
-        imageView.setBackgroundColor(getResources().getColor(R.color.colorOff));
+
+        /** RecyclerView **/
+        // Display paired device using recyclerView
+
+        ArrayList<PinSwitchModel> switches = new ArrayList<>();
+        PinSwitchAdapter adapter = new PinSwitchAdapter();
+
+        if (PinSwitchAdapter.pinSwitches != null){
+            switches = PinSwitchAdapter.pinSwitches;
+        }
+        else {
+            switches = new ArrayList<>();
+        }
+
+        final ArrayList<PinSwitchModel> pinSwitchList = switches;
+        final PinSwitchAdapter pinSwitchAdapter = new PinSwitchAdapter(this, pinSwitchList);
+
+        final RecyclerView recyclerView = findViewById(R.id.pinSwitchRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(pinSwitchAdapter);
+        /* Testing Flex manager */
+        FlexboxLayoutManager layoutManager = FlexboxLayoutManager(this)
+        layoutManager.flexDirection = FlexDirection.ROW
+        layoutManager.justifyContent = JustifyContent.CENTER
+        recyclerView.layoutManager = layoutManager
+
+        final Button buttonAddPinSwitch = findViewById(R.id.buttonAddPinSwitch);
+        buttonAddPinSwitch.setEnabled(false);
+
+        final EditText addPinNumberEditText = findViewById(R.id.addPinNumberEditText);
+        addPinNumberEditText.setEnabled(false);
 
         // If a bluetooth device has been selected from SelectDeviceActivity
         deviceName = getIntent().getStringExtra("deviceName");
         if (deviceName != null){
             // Get the device address to make BT Connection
             deviceAddress = getIntent().getStringExtra("deviceAddress");
-            // Show progree and connection status
+            // Show progress and connection status
             toolbar.setSubtitle("Connecting to " + deviceName + "...");
             progressBar.setVisibility(View.VISIBLE);
             buttonConnect.setEnabled(false);
+            buttonAddPinSwitch.setEnabled(false);
+            addPinNumberEditText.setEnabled(false);
 
             /*
             This is the most important piece of code. When "deviceName" is found
@@ -89,27 +123,24 @@ public class MainActivity extends AppCompatActivity {
                                 toolbar.setSubtitle("Connected to " + deviceName);
                                 progressBar.setVisibility(View.GONE);
                                 buttonConnect.setEnabled(true);
-                                buttonToggle.setEnabled(true);
+                                buttonAddPinSwitch.setEnabled(true);
+                                addPinNumberEditText.setEnabled(true);
                                 break;
                             case -1:
                                 toolbar.setSubtitle("Device fails to connect");
                                 progressBar.setVisibility(View.GONE);
                                 buttonConnect.setEnabled(true);
+                                buttonAddPinSwitch.setEnabled(false);
+                                addPinNumberEditText.setEnabled(false);
                                 break;
                         }
                         break;
 
                     case MESSAGE_READ:
                         String arduinoMsg = msg.obj.toString(); // Read message from Arduino
-                        switch (arduinoMsg.toLowerCase()){
-                            case "led is turned on":
-                                imageView.setBackgroundColor(getResources().getColor(R.color.colorOn));
-                                textViewInfo.setText("Arduino Message : " + arduinoMsg);
-                                break;
-                            case "led is turned off":
-                                imageView.setBackgroundColor(getResources().getColor(R.color.colorOff));
-                                textViewInfo.setText("Arduino Message : " + arduinoMsg);
-                                break;
+                        if (arduinoMsg.startsWith("Message:")) {
+                            Toast.makeText(MainActivity.this, arduinoMsg,
+                                    Toast.LENGTH_LONG).show();
                         }
                         break;
                 }
@@ -127,25 +158,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Button to ON/OFF LED on Arduino Board
-        buttonToggle.setOnClickListener(new View.OnClickListener() {
+        buttonAddPinSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String cmdText = null;
-                String btnState = buttonToggle.getText().toString().toLowerCase();
-                switch (btnState){
-                    case "turn on":
-                        buttonToggle.setText("Turn Off");
-                        // Command to turn on LED on Arduino. Must match with the command in Arduino code
-                        cmdText = "<turn on>";
-                        break;
-                    case "turn off":
-                        buttonToggle.setText("Turn On");
-                        // Command to turn off LED on Arduino. Must match with the command in Arduino code
-                        cmdText = "<turn off>";
-                        break;
+                // TODO :: Add a new pinSwitch to the recyclerview
+                String pinValue = addPinNumberEditText.getText().toString();
+                if (pinValue == null
+                        || pinValue.trim().length() == 0){
+                    Toast.makeText(MainActivity.this, "Invalid Pin Number", Toast.LENGTH_LONG);
+                    return;
                 }
-                // Send command to Arduino board
-                connectedThread.write(cmdText);
+
+                int pin = Integer.parseInt(pinValue);
+                pinSwitchAdapter.addItem(new PinSwitchModel(pin));
             }
         });
     }

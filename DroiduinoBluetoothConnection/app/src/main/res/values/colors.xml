@@ -5,4 +5,7 @@
     <color name="colorAccent">#E040FB</color>
     <color name="colorOff">#FFFFFF</color>
     <color name="colorOn">#E040FB</color>
+    <color name="message">#FF0000</color>
+    <color name="switch_background">#A62555FF</color>
+    <color name="widget_background">#379ae6</color>
 </resources>
