@@ -12,14 +12,14 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="?attr/colorPrimaryDark"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:subtitleTextColor="@android:color/background_light"
-        app:title="Arduino Fireworks Control Panel"
+        app:title="@string/app_title"
         app:titleTextColor="@android:color/background_light" />
 
     <Button
@@ -35,17 +35,18 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/pinSwitchRecyclerView"
-        android:layout_width="416dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.60"
+        app:layout_constraintHeight_percent="0.75"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:layout_constraintWidth_percent="0.50" />
 
     <ProgressBar
         android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
+        style="?android:attr/progressBarStyleLarge"
+        android:theme="@style/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -61,32 +62,51 @@
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="171dp"
         android:layout_height="83dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="192dp"
+        android:layout_marginTop="24dp"
         android:backgroundTint="@color/widget_background"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         android:text="Add Switch For Pin"
         android:textAppearance="@android:style/TextAppearance"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.31"
         app:layout_constraintStart_toStartOf="@+id/pinSwitchRecyclerView"
         app:layout_constraintTop_toBottomOf="@+id/pinSwitchRecyclerView" />
 
     <EditText
         android:id="@+id/addPinNumberEditText"
-        android:layout_width="110dp"
-        android:layout_height="73dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="91dp"
+        android:layout_height="83dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/widget_round_corners"
+        android:descendantFocusability="blocksDescendants"
         android:ems="10"
         android:inputType="number"
-        android:text="3"
+        android:text="2"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="34sp"
-        app:layout_constraintEnd_toEndOf="@+id/pinSwitchRecyclerView"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/buttonAddPinSwitch"
+        app:layout_constraintTop_toBottomOf="@+id/pinSwitchRecyclerView" />
+
+    <EditText
+        android:id="@+id/editTextSwitchName"
+        android:layout_width="333dp"
+        android:layout_height="81dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/widget_round_corners"
+        android:ems="10"
+        android:paddingLeft="20dp"
+        android:text=""
+        android:inputType="textCapSentences"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:hint="Enter Switch Name"
+        android:textColorHint="@android:color/white"
+        app:layout_constraintStart_toEndOf="@+id/addPinNumberEditText"
         app:layout_constraintTop_toBottomOf="@+id/pinSwitchRecyclerView" />
 
 

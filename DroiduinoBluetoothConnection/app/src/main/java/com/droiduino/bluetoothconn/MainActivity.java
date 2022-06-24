@@ -3,6 +3,7 @@ package com.droiduino.bluetoothconn;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,6 +35,12 @@ import java.util.UUID;
 
 import static android.content.ContentValues.TAG;
 
+import com.google.android.flexbox.AlignContent;
+import com.google.android.flexbox.AlignItems;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
+
 public class MainActivity extends AppCompatActivity {
 
     private String deviceName = null;
@@ -60,8 +67,7 @@ public class MainActivity extends AppCompatActivity {
         /** RecyclerView **/
         // Display paired device using recyclerView
 
-        ArrayList<PinSwitchModel> switches = new ArrayList<>();
-        PinSwitchAdapter adapter = new PinSwitchAdapter();
+        ArrayList<PinSwitchModel> switches;
 
         if (PinSwitchAdapter.pinSwitches != null){
             switches = PinSwitchAdapter.pinSwitches;
@@ -74,19 +80,25 @@ public class MainActivity extends AppCompatActivity {
         final PinSwitchAdapter pinSwitchAdapter = new PinSwitchAdapter(this, pinSwitchList);
 
         final RecyclerView recyclerView = findViewById(R.id.pinSwitchRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(pinSwitchAdapter);
-        /* Testing Flex manager */
-        FlexboxLayoutManager layoutManager = FlexboxLayoutManager(this)
-        layoutManager.flexDirection = FlexDirection.ROW
-        layoutManager.justifyContent = JustifyContent.CENTER
-        recyclerView.layoutManager = layoutManager
+        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this);
+        layoutManager.setFlexDirection(FlexDirection.ROW);
+        layoutManager.setJustifyContent(JustifyContent.SPACE_AROUND);
+        recyclerView.setLayoutManager(layoutManager);
+
+        ItemTouchHelper.Callback callback =
+                new MyItemTouchHelperCallback(pinSwitchAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         final Button buttonAddPinSwitch = findViewById(R.id.buttonAddPinSwitch);
-        buttonAddPinSwitch.setEnabled(false);
+//        buttonAddPinSwitch.setEnabled(false);
 
         final EditText addPinNumberEditText = findViewById(R.id.addPinNumberEditText);
-        addPinNumberEditText.setEnabled(false);
+//        addPinNumberEditText.setEnabled(false);
+
+        final EditText editTextSwitchName = findViewById(R.id.editTextSwitchName);
+//        editTextSwitchName.setEnabled(false);
 
         // If a bluetooth device has been selected from SelectDeviceActivity
         deviceName = getIntent().getStringExtra("deviceName");
@@ -99,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
             buttonConnect.setEnabled(false);
             buttonAddPinSwitch.setEnabled(false);
             addPinNumberEditText.setEnabled(false);
+            editTextSwitchName.setEnabled(false);
 
             /*
             This is the most important piece of code. When "deviceName" is found
@@ -125,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
                                 buttonConnect.setEnabled(true);
                                 buttonAddPinSwitch.setEnabled(true);
                                 addPinNumberEditText.setEnabled(true);
+                                editTextSwitchName.setEnabled(true);
                                 break;
                             case -1:
                                 toolbar.setSubtitle("Device fails to connect");
@@ -132,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
                                 buttonConnect.setEnabled(true);
                                 buttonAddPinSwitch.setEnabled(false);
                                 addPinNumberEditText.setEnabled(false);
+                                editTextSwitchName.setEnabled(false);
                                 break;
                         }
                         break;
@@ -161,18 +176,32 @@ public class MainActivity extends AppCompatActivity {
         buttonAddPinSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO :: Add a new pinSwitch to the recyclerview
                 String pinValue = addPinNumberEditText.getText().toString();
-                if (pinValue == null
-                        || pinValue.trim().length() == 0){
+                String pinName = editTextSwitchName.getText().toString();
+
+                if (isNullOrWhitespace(pinValue)){
                     Toast.makeText(MainActivity.this, "Invalid Pin Number", Toast.LENGTH_LONG);
                     return;
                 }
 
                 int pin = Integer.parseInt(pinValue);
-                pinSwitchAdapter.addItem(new PinSwitchModel(pin));
+
+                if (isNullOrWhitespace(pinName)) {
+                    pinSwitchAdapter.addItem(new PinSwitchModel(pin));
+                }
+                else {
+                    pinSwitchAdapter.addItem(new PinSwitchModel(pinName, pin));
+                }
+
+                // reinitialize
+                editTextSwitchName.setText(null);
+                recyclerView.scrollToPosition(pinSwitchAdapter.getItemCount() - 1);
             }
         });
+    }
+
+    private boolean isNullOrWhitespace(String s){
+        return s == null || s.trim().length() == 0;
     }
 
     /* ============================ Thread to Create Bluetooth Connection =================================== */
@@ -203,6 +232,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void run() {
+            //TODO :: Edit UI when activity and bluetooth connection are closed
+            // Add a disconnect button.
+            // Add event listener for disconnection.
+            // Disable UI when disconnected.
+            // Add remove/relocate option for switches (Press and hold on pin number).
+
             // Cancel discovery because it otherwise slows down the connection.
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             bluetoothAdapter.cancelDiscovery();

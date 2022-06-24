@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PinSwitchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -55,6 +56,7 @@ public class PinSwitchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         itemHolder.pinSwitch.setText(model.getName());
         itemHolder.pinSwitch.setChecked(model.getIsChecked());
+        itemHolder.pinSwitch.setEnabled(model.getIsEnabled());
         itemHolder.pinTextView.setText(Integer.toString(model.getPinNumber()));
 
         // When a device is selected
@@ -86,10 +88,9 @@ public class PinSwitchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         notifyItemInserted(position);
     }
 
-    public void enableUI() {
-
-    }
-    public void disableUI() {
-
+    public void swap(Integer fromPosition, Integer toPosition) {
+        Collections.swap(pinSwitches, fromPosition, toPosition);
+        //notifyItemMoved(fromPosition, toPosition);
+        notifyDataSetChanged();
     }
 }

@@ -3,4 +3,5 @@
     <string name="default_pin_switch_name">Pin</string>
     <string name="default_pin_text_value">2</string>
     <string name="pin_text">#</string>
+    <string name="app_title">Arduino Bluetooth Fireworks Control Panel</string>
 </resources>

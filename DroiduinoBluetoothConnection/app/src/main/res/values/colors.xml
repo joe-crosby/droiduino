@@ -7,5 +7,6 @@
     <color name="colorOn">#E040FB</color>
     <color name="message">#FF0000</color>
     <color name="switch_background">#A62555FF</color>
-    <color name="widget_background">#379ae6</color>
+    <color name="widget_background">#0288D1</color>
+    <color name="progressBar">#0000FF</color>
 </resources>
