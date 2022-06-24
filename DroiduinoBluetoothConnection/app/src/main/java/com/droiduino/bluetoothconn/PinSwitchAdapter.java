@@ -1,6 +1,8 @@
 package com.droiduino.bluetoothconn;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +27,13 @@ public class PinSwitchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder {
         Switch pinSwitch;
         TextView pinTextView;
+        TextView pinNameTextView;
 
         public ViewHolder(View v) {
             super(v);
             pinSwitch = v.findViewById(R.id.pinSwitch);
             pinTextView = v.findViewById((R.id.pinTextView));
+            pinNameTextView = v.findViewById(R.id.pinNameTextView);
         }
     }
     public PinSwitchAdapter(){};
@@ -40,7 +44,8 @@ public class PinSwitchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.pin_switch_layout, parent, false);
+        context = parent.getContext();
+        View v = LayoutInflater.from(context).inflate(R.layout.pin_switch_layout_2, parent, false);
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
@@ -54,10 +59,36 @@ public class PinSwitchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         ViewHolder itemHolder = (ViewHolder) holder;
         final PinSwitchModel model = (PinSwitchModel) pinSwitches.get(position);
 
-        itemHolder.pinSwitch.setText(model.getName());
+        itemHolder.pinNameTextView.setText(model.getName());
         itemHolder.pinSwitch.setChecked(model.getIsChecked());
         itemHolder.pinSwitch.setEnabled(model.getIsEnabled());
         itemHolder.pinTextView.setText(Integer.toString(model.getPinNumber()));
+
+        // Delete??
+        itemHolder.pinTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(context).setTitle("Confirm Delete?")
+                        .setMessage("Are you sure?")
+                        .setPositiveButton("YES",
+                                (dialog, which) -> {
+                                    // Perform Action & Dismiss dialog
+                                    int pinIndex = pinSwitches.indexOf(model);
+                                    pinSwitches.remove(pinIndex);
+                                    notifyItemRemoved(pinIndex);
+                                    dialog.dismiss();
+                                })
+                        .setNeutralButton("NO", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Do nothing
+                                dialog.dismiss();
+                            }
+                        })
+                        .create()
+                        .show();
+            }
+        });
 
         // When a device is selected
         itemHolder.pinSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
