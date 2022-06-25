@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6088D1</color>
-    <color name="colorPrimaryOpacity">#F26088D1</color>
+    <color name="colorPrimary">#6088F1</color>
+    <color name="colorPrimaryOpacity">#F26088F1</color>
     <color name="colorAccent">#E040FB</color>
     <color name="colorOff">#FFFFFF</color>
     <color name="colorOn">#E040FB</color>
     <color name="message">#FF0000</color>
     <color name="switch_background">#A62555FF</color>
     <color name="switch_background_edit">#A62599FF</color>
+    <color name="toolbar_button_color">#2599FF</color>
     <color name="progressBar">#0000FF</color>
+    <color name="progressBarBackground">#000000</color>
 </resources>

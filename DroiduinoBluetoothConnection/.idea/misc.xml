@@ -5,11 +5,12 @@
       <map>
         <entry key="..\:/Users/jrcro/GitProjects/Android/droiduino/DroiduinoBluetoothConnection/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.114" />
         <entry key="..\:/Users/jrcro/GitProjects/Android/droiduino/DroiduinoBluetoothConnection/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1195" />
+        <entry key="..\:/Users/jrcro/GitProjects/Android/droiduino/DroiduinoBluetoothConnection/app/src/main/res/drawable/progress_bar_background_rounded.xml" value="0.2" />
         <entry key="..\:/Users/jrcro/GitProjects/Android/droiduino/DroiduinoBluetoothConnection/app/src/main/res/drawable/round_corners.xml" value="0.1935" />
         <entry key="..\:/Users/jrcro/GitProjects/Android/droiduino/DroiduinoBluetoothConnection/app/src/main/res/drawable/switch_layout_round_corners.xml" value="0.1935" />
         <entry key="..\:/Users/jrcro/GitProjects/Android/droiduino/DroiduinoBluetoothConnection/app/src/main/res/drawable/switch_layout_round_corners_drag.xml" value="0.2" />
         <entry key="..\:/Users/jrcro/GitProjects/Android/droiduino/DroiduinoBluetoothConnection/app/src/main/res/drawable/widget_round_corners.xml" value="0.115" />
-        <entry key="..\:/Users/jrcro/GitProjects/Android/droiduino/DroiduinoBluetoothConnection/app/src/main/res/layout/activity_main.xml" value="0.14" />
+        <entry key="..\:/Users/jrcro/GitProjects/Android/droiduino/DroiduinoBluetoothConnection/app/src/main/res/layout/activity_main.xml" value="0.18" />
         <entry key="..\:/Users/jrcro/GitProjects/Android/droiduino/DroiduinoBluetoothConnection/app/src/main/res/layout/activity_select_device.xml" value="0.17074275362318841" />
         <entry key="..\:/Users/jrcro/GitProjects/Android/droiduino/DroiduinoBluetoothConnection/app/src/main/res/layout/device_info_layout.xml" value="0.17074275362318841" />
         <entry key="..\:/Users/jrcro/GitProjects/Android/droiduino/DroiduinoBluetoothConnection/app/src/main/res/layout/pin_switch_layout.xml" value="0.25" />
