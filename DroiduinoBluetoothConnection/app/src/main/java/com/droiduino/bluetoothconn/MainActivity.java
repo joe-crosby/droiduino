@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                             case 1:
                                 toolbar.setSubtitle("Connected to " + deviceName);
                                 progressBar.setVisibility(View.GONE);
+                                buttonConnect.setText("Disconnect");
                                 buttonConnect.setEnabled(true);
                                 buttonAddPinSwitch.setEnabled(true);
                                 addPinNumberEditText.setEnabled(true);
@@ -143,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
                             case -1:
                                 toolbar.setSubtitle("Device fails to connect");
                                 progressBar.setVisibility(View.GONE);
+                                buttonConnect.setText("Connect");
                                 buttonConnect.setEnabled(true);
                                 buttonAddPinSwitch.setEnabled(false);
                                 addPinNumberEditText.setEnabled(false);
@@ -161,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case CONNECTION_DISCONNECTED:
+                        buttonConnect.setText("Connect");
+                        buttonConnect.setEnabled(true);
                         buttonAddPinSwitch.setEnabled(false);
                         addPinNumberEditText.setEnabled(false);
                         editTextSwitchName.setEnabled(false);
@@ -177,9 +181,16 @@ public class MainActivity extends AppCompatActivity {
         buttonConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Move to adapter list
-                Intent intent = new Intent(MainActivity.this, SelectDeviceActivity.class);
-                startActivity(intent);
+                String btnText = buttonConnect.getText().toString();
+                if (btnText.equals("Connect")) {
+                    // Move to adapter list
+                    Intent intent = new Intent(MainActivity.this, SelectDeviceActivity.class);
+                    startActivity(intent);
+                }
+                else if (btnText.equals("Disconnect")){
+                    closeStream();
+                    buttonConnect.setText("Connect");
+                }
             }
         });
 
@@ -355,6 +366,8 @@ public class MainActivity extends AppCompatActivity {
             if (mmSocket != null && mmSocket.isConnected()) {
                 mmSocket.close();
             }
-        } catch (IOException e) { }
+        } catch (IOException e) {
+            Log.e("Error", "closeStream() failed", e);
+        }
     }
 }

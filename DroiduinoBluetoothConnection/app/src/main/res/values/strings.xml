@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Bluetooth Firework Launcher</string>
+    <string name="app_name">Firework Launcher</string>
     <string name="default_pin_switch_name">Pin</string>
     <string name="default_pin_text_value">2</string>
     <string name="pin_text">#</string>
