@@ -62,6 +62,7 @@ public class PinSwitchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         itemHolder.pinNameTextView.setText(model.getName());
         itemHolder.pinSwitch.setChecked(model.getIsChecked());
         itemHolder.pinSwitch.setEnabled(model.getIsEnabled());
+        itemHolder.pinTextView.setEnabled(model.getIsEnabled());
         itemHolder.pinTextView.setText(Integer.toString(model.getPinNumber()));
 
         // Delete??
@@ -121,7 +122,20 @@ public class PinSwitchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void swap(Integer fromPosition, Integer toPosition) {
         Collections.swap(pinSwitches, fromPosition, toPosition);
-        //notifyItemMoved(fromPosition, toPosition);
+        notifyDataSetChanged();
+    }
+
+    public void disable(){
+        for (PinSwitchModel m : pinSwitches){
+            m.setIsEnabled(false);
+        }
+        notifyDataSetChanged();
+    }
+
+    public void enable(){
+        for (PinSwitchModel m : pinSwitches){
+            m.setIsEnabled(true);
+        }
         notifyDataSetChanged();
     }
 }

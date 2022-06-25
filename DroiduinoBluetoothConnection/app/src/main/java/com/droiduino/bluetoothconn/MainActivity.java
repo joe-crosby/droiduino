@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final static int CONNECTING_STATUS = 1; // used in bluetooth handler to identify message status
     private final static int MESSAGE_READ = 2; // used in bluetooth handler to identify message update
+    private final static int CONNECTION_DISCONNECTED = 3; // used in bluetooth handler to handle disconnection
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,13 +93,13 @@ public class MainActivity extends AppCompatActivity {
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
         final Button buttonAddPinSwitch = findViewById(R.id.buttonAddPinSwitch);
-//        buttonAddPinSwitch.setEnabled(false);
+        buttonAddPinSwitch.setEnabled(false);
 
         final EditText addPinNumberEditText = findViewById(R.id.addPinNumberEditText);
-//        addPinNumberEditText.setEnabled(false);
+        addPinNumberEditText.setEnabled(false);
 
         final EditText editTextSwitchName = findViewById(R.id.editTextSwitchName);
-//        editTextSwitchName.setEnabled(false);
+        editTextSwitchName.setEnabled(false);
 
         // If a bluetooth device has been selected from SelectDeviceActivity
         deviceName = getIntent().getStringExtra("deviceName");
@@ -139,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
                                 buttonAddPinSwitch.setEnabled(true);
                                 addPinNumberEditText.setEnabled(true);
                                 editTextSwitchName.setEnabled(true);
+                                pinSwitchAdapter.enable();
                                 break;
                             case -1:
                                 toolbar.setSubtitle("Device fails to connect");
@@ -147,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
                                 buttonAddPinSwitch.setEnabled(false);
                                 addPinNumberEditText.setEnabled(false);
                                 editTextSwitchName.setEnabled(false);
+                                pinSwitchAdapter.disable();
                                 break;
                         }
                         break;
@@ -157,6 +160,16 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, arduinoMsg,
                                     Toast.LENGTH_LONG).show();
                         }
+                        break;
+
+                    case CONNECTION_DISCONNECTED:
+                        buttonAddPinSwitch.setEnabled(false);
+                        addPinNumberEditText.setEnabled(false);
+                        editTextSwitchName.setEnabled(false);
+                        pinSwitchAdapter.disable();
+                        toolbar.setSubtitle(deviceName + " disconnected");
+                        Log.e("Status", msg.obj.toString());
+                        closeStream();
                         break;
                 }
             }
@@ -245,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
                 // Connect to the remote device through the socket. This call blocks
                 // until it succeeds or throws an exception.
                 mmSocket.connect();
+
                 Log.e("Status", "Device connected");
                 handler.obtainMessage(CONNECTING_STATUS, 1, -1).sendToTarget();
             } catch (IOException connectException) {
@@ -261,36 +275,25 @@ public class MainActivity extends AppCompatActivity {
 
             // The connection attempt succeeded. Perform work associated with
             // the connection in a separate thread.
-            connectedThread = new ConnectedThread(mmSocket);
+            connectedThread = new ConnectedThread();
             connectedThread.run();
-        }
-
-        // Closes the client socket and causes the thread to finish.
-        public void cancel() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) {
-                Log.e(TAG, "Could not close the client socket", e);
-            }
         }
     }
 
     /* =============================== Thread for Data Transfer =========================================== */
     public static class ConnectedThread extends Thread {
-        private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
-        public ConnectedThread(BluetoothSocket socket) {
-            mmSocket = socket;
+        public ConnectedThread() {
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
 
             // Get the input and output streams, using temp objects because
             // member streams are final
             try {
-                tmpIn = socket.getInputStream();
-                tmpOut = socket.getOutputStream();
+                tmpIn = mmSocket.getInputStream();
+                tmpOut = mmSocket.getOutputStream();
             } catch (IOException e) { }
 
             mmInStream = tmpIn;
@@ -301,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes = 0; // bytes returned from read()
             // Keep listening to the InputStream until an exception occurs
-            while (true) {
+            while (mmSocket != null && mmSocket.isConnected()) {
                 try {
                     /*
                     Read from the InputStream from Arduino until termination character is reached.
@@ -319,6 +322,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    // Connection closed, disable UI
+                    handler.obtainMessage(CONNECTION_DISCONNECTED, "Current connection closed.").sendToTarget();
                     break;
                 }
             }
@@ -333,25 +338,25 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("Send Error","Unable to send message",e);
             }
         }
-
-        /* Call this from the main activity to shutdown the connection */
-        public void cancel() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) { }
-        }
     }
 
     /* ============================ Terminate Connection at BackPress ====================== */
     @Override
     public void onBackPressed() {
         // Terminate Bluetooth Connection and close app
-        if (createConnectThread != null){
-            createConnectThread.cancel();
-        }
+        closeStream();
+
         Intent a = new Intent(Intent.ACTION_MAIN);
         a.addCategory(Intent.CATEGORY_HOME);
         a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(a);
+    }
+
+    public void closeStream(){
+        try {
+            if (mmSocket != null && mmSocket.isConnected()) {
+                mmSocket.close();
+            }
+        } catch (IOException e) { }
     }
 }

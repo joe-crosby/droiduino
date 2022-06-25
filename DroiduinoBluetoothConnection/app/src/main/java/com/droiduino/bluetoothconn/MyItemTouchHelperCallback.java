@@ -55,6 +55,10 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
                 dragEnd = -1;
             }
         }
+        if (actionState == ItemTouchHelper.ACTION_STATE_DRAG){
+            // Change background - Can be done in a custom view holder, but for simplicity sake this is fine.
+            viewHolder.itemView.setBackgroundResource(R.drawable.switch_layout_round_corners_drag);
+        }
 
         super.onSelectedChanged(viewHolder, actionState);
     }
@@ -62,8 +66,7 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
-        // What do I do here??
-
-        int i = 0;
+        // Reset background - Can be done in a custom view holder, but for simplicity sake this is fine.
+        viewHolder.itemView.setBackgroundResource(R.drawable.switch_layout_round_corners);
     }
 }
