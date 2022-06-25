@@ -4,21 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:minHeight="80dp"
+    android:minHeight="0dp"
+    app:layout_constraintHeight_percent=".15"
     android:background="@drawable/switch_layout_round_corners"
     android:layout_marginTop="10dp">
 
     <TextView
         android:id="@+id/pinNameTextView"
-        android:layout_width="208dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:text="@string/default_pin_switch_name"
         android:textColor="@android:color/white"
-        android:textSize="34sp"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent=".4" />
 
     <Switch
         android:id="@+id/pinSwitch"
@@ -38,28 +40,30 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="37dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:gravity="center_vertical|right"
         android:text="@string/pin_text"
         android:textColor="@android:color/white"
-        android:textSize="34sp"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/pinSwitch"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.51" />
+        app:layout_constraintVertical_bias="0.51"
+        app:layout_constraintWidth_percent=".08" />
 
     <TextView
         android:id="@+id/pinTextView"
-        android:layout_width="78dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="-1"
         android:textColor="@android:color/white"
-        android:textSize="34sp"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView2"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent=".2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

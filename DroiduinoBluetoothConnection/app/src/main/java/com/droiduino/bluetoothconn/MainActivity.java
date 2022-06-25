@@ -2,15 +2,14 @@ package com.droiduino.bluetoothconn;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,9 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.NumberPicker;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -29,14 +26,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import static android.content.ContentValues.TAG;
 
-import com.google.android.flexbox.AlignContent;
-import com.google.android.flexbox.AlignItems;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
@@ -57,7 +50,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        Configuration config = getResources().getConfiguration();
+        if (config.smallestScreenWidthDp >= 600) {
+            setContentView(R.layout.activity_main);
+        } else {
+            setContentView(R.layout.activity_main_phone);
+        }
 
         // UI Initialization
         final Button buttonConnect = findViewById(R.id.buttonConnect);
@@ -167,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                         addPinNumberEditText.setEnabled(false);
                         editTextSwitchName.setEnabled(false);
                         pinSwitchAdapter.disable();
-                        toolbar.setSubtitle(deviceName + " disconnected");
+                        toolbar.setSubtitle(R.string.app_substring);
                         Log.e("Status", msg.obj.toString());
                         closeStream();
                         break;

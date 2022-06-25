@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,8 +46,15 @@ public class PinSwitchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
-        View v = LayoutInflater.from(context).inflate(R.layout.pin_switch_layout_2, parent, false);
-        ViewHolder vh = new ViewHolder(v);
+        Configuration config = context.getResources().getConfiguration();
+
+        ViewHolder vh;
+        if (config.smallestScreenWidthDp >= 600) {
+            vh = new ViewHolder(LayoutInflater.from(context).inflate(R.layout.pin_switch_layout, parent, false));
+        } else {
+            vh = new ViewHolder(LayoutInflater.from(context).inflate(R.layout.pin_switch_layout_phone, parent, false));
+        }
+
         return vh;
     }
 
